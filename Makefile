@@ -22,7 +22,7 @@ zip: report-proc.zip
 report-proc.zip: $(REPORTS)
 	zip $@ $+
 
-CC=gcc
+CC=clang
 CFLAGS=-std=gnu99 -Wall -Werror
 LDFLAGS=
 main: main.c node.c logger.c lex.yy.c y.tab.c $(HDRS)
