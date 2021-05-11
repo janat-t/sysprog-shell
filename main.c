@@ -86,7 +86,7 @@ int invoke_node(node_t *node) {
         // }
 
         //////////// 2 pipes case ///////////
-        // 
+        //
         // int fd1[2];
         // pipe(fd1);
         // if (fork() == 0) {
@@ -135,7 +135,7 @@ int invoke_node(node_t *node) {
         // }
 
         //////////// using exec_pipe_node func (recursive) ////////////
-        
+
         status = exec_pipe_node(node, STDIN_FILENO);
 
         break;
@@ -175,10 +175,16 @@ int invoke_node(node_t *node) {
         break;
 
     case N_SUBSHELL: /* ( foo... ) */
-        LOG("node->lhs: %s", inspect_node(node->lhs));
-        status = 0;
+        LOG("node: %s", inspect_node(node));
 
         /* Subshell execution (Task C) */
+        if (fork() == 0) {
+            status = invoke_node(node->lhs);
+            close(STDIN_FILENO);
+            exit(status);
+        } else {
+            wait(&status);
+        }
 
         break;
 
@@ -266,6 +272,9 @@ int rec_redirect_node(node_t *node) {
     if (node->type == N_COMMAND) {
         return execvp(node->argv[0], node->argv);
     }
+    if (node->type == N_SUBSHELL) {
+        return invoke_node(node);
+    }
     int fd;
     switch (node->type) {
     case N_REDIRECT_IN:
@@ -312,7 +321,7 @@ void parse_options(int argc, char **argv) {
 }
 
 int invoke_line(char *line) {
-    LOG("\n\nInput line='%s'", line);
+    LOG("Input line='%s'", line);
     node_t *node = yacc_parse(line);
     if (node == NULL) {
         LOG("Obtained empty line: ignored");
@@ -341,7 +350,7 @@ int main(int argc, char **argv) {
     for (int history_id = 1;; history_id++) {
         char line[MAX_LINE];
         if (prompt) {
-            // printf("ttsh[%d]> ", history_id);
+            // LOG("ttsh[%d]> ", history_id);
             printf("ttsh[%d] %s ", history_id, BIRD);
         }
         /* Read one line */
