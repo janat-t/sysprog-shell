@@ -22,9 +22,13 @@ int prompt = 1;
 
 char *cmdname;
 
-void exec_pipe_node(node_t *node, int inpfd);
+int exec_command_node(node_t *node, int inpfd);
 
-void exec_command_node(node_t *node, int inpfd);
+int exec_pipe_node(node_t *node, int inpfd);
+
+int exec_redirect_node(node_t *node);
+
+int rec_redirect_node(node_t *node);
 
 /** Run a node and obtain an exit status. */
 int invoke_node(node_t *node) {
@@ -32,7 +36,7 @@ int invoke_node(node_t *node) {
        Adding new functions is, of course, also allowed. */
 
     LOG("Invoke: %s", inspect_node(node));
-
+    int status;
     switch (node->type) {
     case N_COMMAND:
         /* change directory (cd with no argument is not supported.) */
@@ -49,7 +53,7 @@ int invoke_node(node_t *node) {
 
         /* Simple command execution (Task 1) */
 
-        exec_command_node(node, STDIN_FILENO);
+        status = exec_command_node(node, STDIN_FILENO);
 
         break;
 
@@ -130,9 +134,9 @@ int invoke_node(node_t *node) {
         //     }
         // }
 
-        //////////// using exec_pipe_node func ////////////
+        //////////// using exec_pipe_node func (recursive) ////////////
         
-        exec_pipe_node(node, STDIN_FILENO);
+        status = exec_pipe_node(node, STDIN_FILENO);
 
         break;
 
@@ -140,8 +144,7 @@ int invoke_node(node_t *node) {
     case N_REDIRECT_OUT:    /* foo > bar */
     case N_REDIRECT_APPEND: /* foo >> bar */
         LOG("node->filename: %s", node->filename);
-
-        /* Redirection (Task 4) */
+        status = exec_redirect_node(node);
 
         break;
 
@@ -151,19 +154,29 @@ int invoke_node(node_t *node) {
 
         /* Sequential execution (Task A) */
 
+        invoke_node(node->lhs);
+        status = invoke_node(node->rhs);
+
         break;
 
     case N_AND: /* foo && bar */
+        status = invoke_node(node->lhs);
+        if (!status) {
+            status = invoke_node(node->rhs);
+        }
+        break;
     case N_OR:  /* foo || bar */
         LOG("node->lhs: %s", inspect_node(node->lhs));
         LOG("node->rhs: %s", inspect_node(node->rhs));
-
-        /* Branching (Task B) */
-
+        status = invoke_node(node->lhs);
+        if (status) {
+            status = invoke_node(node->rhs);
+        }
         break;
 
     case N_SUBSHELL: /* ( foo... ) */
         LOG("node->lhs: %s", inspect_node(node->lhs));
+        status = 0;
 
         /* Subshell execution (Task C) */
 
@@ -172,35 +185,48 @@ int invoke_node(node_t *node) {
     default:
         assert(false);
     }
-    return 0;
+    return status;
 }
 
-void exec_command_node(node_t *node, int inpfd) {
+int exec_command_node(node_t *node, int inpfd) {
     if (fork() == 0) { // Child process
         if (inpfd != STDIN_FILENO) {
             dup2(inpfd, STDIN_FILENO);
             close(inpfd);
         }
-        execvp(node->argv[0], node->argv);
+        int exit_status = execvp(node->argv[0], node->argv);
         close(STDIN_FILENO);
-        exit(0);
+        exit(exit_status);
     } else { // Parent process
+        int status;
         if (inpfd != STDIN_FILENO)
             close(inpfd);
-        wait(NULL);
+        wait(&status);
+        return status;
     }
 }
 
-void exec_pipe_node(node_t *node, int inpfd) {
+int exec_pipe_node(node_t *node, int inpfd) {
     if (node->type == N_COMMAND) { // execute last command (pipe to next node is not needed)
-        exec_command_node(node, inpfd);
-        return;
+        return exec_command_node(node, inpfd);
     }
-    if (node->type != N_PIPE) { // Call non-pipe cammand
-        invoke_node(node);
-        return;
+    if (node->type == N_REDIRECT_IN || node->type == N_REDIRECT_OUT || node->type == N_REDIRECT_APPEND) {
+        if (fork() == 0){
+            if (inpfd != STDIN_FILENO) {
+                dup2(inpfd, STDIN_FILENO);
+                close(inpfd);
+            }
+            int exit_status = rec_redirect_node(node);
+            close(STDIN_FILENO);
+            exit(exit_status);
+        } else {
+            int status;
+            wait(&status);
+            return status;
+        }
     }
     int fd[2];
+    int status, exit_status;
     pipe(fd);
     if (fork() == 0) { // child process
         close(fd[0]);
@@ -212,17 +238,59 @@ void exec_pipe_node(node_t *node, int inpfd) {
             dup2(fd[1], STDOUT_FILENO);
             close(fd[1]);
         }
-        execvp(node->lhs->argv[0], node->lhs->argv);
+        int exit_status = rec_redirect_node(node->lhs);
         close(STDIN_FILENO);
-        exit(0);
+        exit(exit_status);
     } else { // parent process
         close(fd[1]);
         if (inpfd != STDIN_FILENO)
             close(inpfd);
-        exec_pipe_node(node->rhs, fd[0]);
+        exit_status = exec_pipe_node(node->rhs, fd[0]);
         close(fd[0]);
-        wait(NULL);
+        wait(&status);
     }
+    return status | exit_status;
+}
+
+int exec_redirect_node(node_t *node) {
+    if (fork() == 0) { // Child process
+        exit(rec_redirect_node(node));
+    } else { // Parent process
+        int status;
+        wait(&status);
+        return status;
+    }
+}
+
+int rec_redirect_node(node_t *node) {
+    if (node->type == N_COMMAND) {
+        return execvp(node->argv[0], node->argv);
+    }
+    int fd;
+    switch (node->type) {
+    case N_REDIRECT_IN:
+        fd = open(node->filename, O_RDONLY);
+        dup2(fd, STDIN_FILENO);
+        close(fd);
+        break;
+    case N_REDIRECT_OUT:
+        fd = open(node->filename, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+        dup2(fd, STDOUT_FILENO);
+        close(fd);
+        break;
+    case N_REDIRECT_APPEND:
+        fd = open(node->filename, O_WRONLY | O_CREAT | O_APPEND, 0666);
+        dup2(fd, STDOUT_FILENO);
+        close(fd);
+        break;
+
+    default:
+        return 1;
+    }
+    rec_redirect_node(node->lhs);
+    close(STDIN_FILENO);
+    close(STDOUT_FILENO);
+    return 0;
 }
 
 void parse_options(int argc, char **argv) {
@@ -244,7 +312,7 @@ void parse_options(int argc, char **argv) {
 }
 
 int invoke_line(char *line) {
-    LOG("Input line='%s'", line);
+    LOG("\n\nInput line='%s'", line);
     node_t *node = yacc_parse(line);
     if (node == NULL) {
         LOG("Obtained empty line: ignored");
