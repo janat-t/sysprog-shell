@@ -296,10 +296,10 @@ int rec_redirect_node(node_t *node) {
     default:
         return 1;
     }
-    rec_redirect_node(node->lhs);
+    int status = rec_redirect_node(node->lhs);
     close(STDIN_FILENO);
     close(STDOUT_FILENO);
-    return 0;
+    return status;
 }
 
 void parse_options(int argc, char **argv) {
