@@ -3,55 +3,414 @@
 # 課題Nの回答は，### ExerciseN ### のコメント行の下の領域に記述して下さい．
 
 ### ID ### 学籍番号を「NN_NNNNN」のように書いて下さい
+19_60096
 
 ### Email ### mメールアドレスを書いて下さい
+taerakul.j.aa@m.titech.ac.jp
 
 ### Name ### 氏名を「東工 太郎」のように書いて下さい
+TAERAKUL Janat
 
 ### Exercise1 ### 課題1
 # 実装完了したことを示すための適当なコマンドの実行結果をまるごと（ttshプロンプト含めて）ペーストせよ．
+❯ ./main
+ttsh[1] 🐦 pwd
+main.c:324(invoke_line) [16778]: Input line='pwd'
+(root) [N_COMMAND] argv: [0]:pwd
+main.c:38(invoke_node) [16778]: Invoke: [N_COMMAND] argv: [0]:pwd
+/Users/janat/Documents/_Titech/Y3/Q1/System Programming/sysprog-shell
+ttsh[2] 🐦 ls -l
+main.c:324(invoke_line) [16778]: Input line='ls -l'
+(root) [N_COMMAND] argv: [0]:ls [1]:-l
+main.c:38(invoke_node) [16778]: Invoke: [N_COMMAND] argv: [0]:ls [1]:-l
+total 560
+-rw-r--r--   1 janat  staff   2542 May 11 22:06 Makefile
+-rwxr-xr-x   1 janat  staff  49608 May 12 01:11 fd
+-rw-r--r--   1 janat  staff    372 May 11 21:25 fd.c
+-rw-r--r--   1 janat  staff  45947 May 11 21:25 lex.yy.c
+-rw-r--r--   1 janat  staff   1670 May 11 21:25 logger.c
+-rwxr-xr-x@  1 janat  staff  72624 May 12 01:11 main
+-rw-r--r--   1 janat  staff  10217 May 12 10:42 main.c
+-rw-r--r--   1 janat  staff   1917 May 11 21:25 main.h
+-rw-r--r--   1 janat  staff   4198 May 11 21:25 node.c
+-rw-r--r--   1 janat  staff   2122 May 11 21:25 parse.y
+-rw-r--r--   1 janat  staff   2115 May 11 21:25 report.txt
+-rw-r--r--   1 janat  staff    893 May 11 21:25 scan.l
+drwxr-xr-x@ 48 janat  staff   1536 May 11 21:25 t
+-rwxr-xr-x   1 janat  staff    706 May 11 21:25 test-sh.sh
+-rwxr-xr-x   1 janat  staff   1610 May 11 21:25 test.sh
+-rw-r--r--   1 janat  staff  45880 May 11 21:25 y.tab.c
+-rw-r--r--   1 janat  staff   3271 May 11 21:25 y.tab.h
+ttsh[3] 🐦 cd t
+main.c:324(invoke_line) [16778]: Input line='cd t'
+(root) [N_COMMAND] argv: [0]:cd [1]:t
+main.c:38(invoke_node) [16778]: Invoke: [N_COMMAND] argv: [0]:cd [1]:t
+ttsh[4] 🐦 pwd
+main.c:324(invoke_line) [16778]: Input line='pwd'
+(root) [N_COMMAND] argv: [0]:pwd
+main.c:38(invoke_node) [16778]: Invoke: [N_COMMAND] argv: [0]:pwd
+/Users/janat/Documents/_Titech/Y3/Q1/System Programming/sysprog-shell/t
+ttsh[5] 🐦 cd ..
+main.c:324(invoke_line) [16778]: Input line='cd ..'
+(root) [N_COMMAND] argv: [0]:cd [1]:..
+main.c:38(invoke_node) [16778]: Invoke: [N_COMMAND] argv: [0]:cd [1]:..
+ttsh[6] 🐦 cat t/hello.txt
+main.c:324(invoke_line) [16778]: Input line='cat t/hello.txt'
+(root) [N_COMMAND] argv: [0]:cat [1]:t/hello.txt
+main.c:38(invoke_node) [16778]: Invoke: [N_COMMAND] argv: [0]:cat [1]:t/hello.txt
+HelloWorld
+ttsh[7] 🐦 echo bar foo
+main.c:324(invoke_line) [16778]: Input line='echo bar foo'
+(root) [N_COMMAND] argv: [0]:echo [1]:bar [2]:foo
+main.c:38(invoke_node) [16778]: Invoke: [N_COMMAND] argv: [0]:echo [1]:bar [2]:foo
+bar foo
+
+❯ make test1
+✅  OK 🎉 [1-1whoami] ./main -q -p < t/1-1whoami.txt
+✅  OK 🎉 [1-2hostname] ./main -q -p < t/1-2hostname.txt
+✅  OK 🎉 [1-3echo] ./main -q -p < t/1-3echo.txt
+✅  OK 🎉 [1-4sleep] ./main -q -p < t/1-4sleep.txt
+✅  OK 🎉 [1-5cd] ./main -q -p < t/1-5cd.txt
+✅  OK 🎉 [1-s1ppid] ./main -q -p < t/1-s1ppid.txt
+
 # 未完部分がある場合は明示せよ．
 
 
 
 ### Exercise2 ### 課題2
 # 実装完了したことを示すための適当なコマンドの実行結果をまるごと（ttshプロンプト含めて）ペーストせよ．
+❯ ./main
+ttsh[1] 🐦 echo hello | rev
+main.c:324(invoke_line) [16846]: Input line='echo hello | rev'
+(root) [N_PIPE]
+  (lhs) [N_COMMAND] argv: [0]:echo [1]:hello
+  (rhs) [N_COMMAND] argv: [0]:rev
+main.c:38(invoke_node) [16846]: Invoke: [N_PIPE]
+main.c:61(invoke_node) [16846]: node->lhs: [N_COMMAND] argv: [0]:echo [1]:hello
+main.c:62(invoke_node) [16846]: node->rhs: [N_COMMAND] argv: [0]:rev
+olleh
+ttsh[2] 🐦 yes | head
+main.c:324(invoke_line) [16846]: Input line='yes | head'
+(root) [N_PIPE]
+  (lhs) [N_COMMAND] argv: [0]:yes
+  (rhs) [N_COMMAND] argv: [0]:head
+main.c:38(invoke_node) [16846]: Invoke: [N_PIPE]
+main.c:61(invoke_node) [16846]: node->lhs: [N_COMMAND] argv: [0]:yes
+main.c:62(invoke_node) [16846]: node->rhs: [N_COMMAND] argv: [0]:head
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+ttsh[3] 🐦 cat main.c | wc
+main.c:324(invoke_line) [16846]: Input line='cat main.c | wc'
+(root) [N_PIPE]
+  (lhs) [N_COMMAND] argv: [0]:cat [1]:main.c
+  (rhs) [N_COMMAND] argv: [0]:wc
+main.c:38(invoke_node) [16846]: Invoke: [N_PIPE]
+main.c:61(invoke_node) [16846]: node->lhs: [N_COMMAND] argv: [0]:cat [1]:main.c
+main.c:62(invoke_node) [16846]: node->rhs: [N_COMMAND] argv: [0]:wc
+     368    1021   10217
+
+❯ make test2
+✅  OK 🎉 [2-1simplel] ./main -q -p < t/2-1simplel.txt
+✅  OK 🎉 [2-2simpler] ./main -q -p < t/2-2simpler.txt
+✅  OK 🎉 [2-3rev] ./main -q -p < t/2-3rev.txt
+✅  OK 🎉 [2-4big] ./main -q -p < t/2-4big.txt
+✅  OK 🎉 [2-5yes] ./main -q -p < t/2-5yes.txt
+✅  OK 🎉 [2-s1fd] ./main -q -p < t/2-s1fd.txt
+✅  OK 🎉 [2-s2ppid] ./main -q -p < t/2-s2ppid.txt
+
 # 未完部分がある場合は明示せよ．
 
 
 
 ### Exercise3 ### 課題3
 # 実装完了したことを示すための適当なコマンドの実行結果をまるごと（ttshプロンプト含めて）ペーストせよ．
+❯ ./main
+ttsh[1] 🐦 cat main.c | grep '^LOG' | wc
+main.c:324(invoke_line) [22950]: Input line='cat main.c | grep '^LOG' | wc'
+(root) [N_PIPE]
+  (lhs) [N_COMMAND] argv: [0]:cat [1]:main.c
+  (rhs) [N_PIPE]
+    (lhs) [N_COMMAND] argv: [0]:grep [1]:^LOG
+    (rhs) [N_COMMAND] argv: [0]:wc
+main.c:38(invoke_node) [22950]: Invoke: [N_PIPE]
+main.c:61(invoke_node) [22950]: node->lhs: [N_COMMAND] argv: [0]:cat [1]:main.c
+main.c:62(invoke_node) [22950]: node->rhs: [N_PIPE]
+       0       0       0
+ttsh[2] 🐦 yes | head -n 20 | wc -l
+main.c:324(invoke_line) [22950]: Input line='yes | head -n 20 | wc -l'
+(root) [N_PIPE]
+  (lhs) [N_COMMAND] argv: [0]:yes
+  (rhs) [N_PIPE]
+    (lhs) [N_COMMAND] argv: [0]:head [1]:-n [2]:20
+    (rhs) [N_COMMAND] argv: [0]:wc [1]:-l
+main.c:38(invoke_node) [22950]: Invoke: [N_PIPE]
+main.c:61(invoke_node) [22950]: node->lhs: [N_COMMAND] argv: [0]:yes
+main.c:62(invoke_node) [22950]: node->rhs: [N_PIPE]
+      20
+ttsh[3] 🐦 cat t/hello.txt | rev
+main.c:324(invoke_line) [22950]: Input line='cat t/hello.txt | rev'
+(root) [N_PIPE]
+  (lhs) [N_COMMAND] argv: [0]:cat [1]:t/hello.txt
+  (rhs) [N_COMMAND] argv: [0]:rev
+main.c:38(invoke_node) [22950]: Invoke: [N_PIPE]
+main.c:61(invoke_node) [22950]: node->lhs: [N_COMMAND] argv: [0]:cat [1]:t/hello.txt
+main.c:62(invoke_node) [22950]: node->rhs: [N_COMMAND] argv: [0]:rev
+dlroWolleH
+
+❯ make test3
+✅  OK 🎉 [3-1small] ./main -q -p < t/3-1small.txt
+✅  OK 🎉 [3-2big] ./main -q -p < t/3-2big.txt
+✅  OK 🎉 [3-3chain] ./main -q -p < t/3-3chain.txt
+✅  OK 🎉 [3-4yes] ./main -q -p < t/3-4yes.txt
+✅  OK 🎉 [3-5gzip] ./main -q -p < t/3-5gzip.txt
+✅  OK 🎉 [3-6max] ./main -q -p < t/3-6max.txt
+✅  OK 🎉 [3-s1fd] ./main -q -p < t/3-s1fd.txt
+✅  OK 🎉 [3-s2ppid] ./main -q -p < t/3-s2ppid.txt
+
 # 未完部分がある場合は明示せよ．
 
 
 
 ### Exercise4 ### 課題4
 # 実装完了したことを示すための適当なコマンドの実行結果をまるごと（ttshプロンプト含めて）ペーストせよ．
+❯ ./main
+ttsh[1] 🐦 cat < t/hello.txt
+main.c:324(invoke_line) [23683]: Input line='cat < t/hello.txt'
+(root) [N_REDIRECT_IN] filename: {t/hello.txt}
+  (lhs) [N_COMMAND] argv: [0]:cat
+main.c:38(invoke_node) [23683]: Invoke: [N_REDIRECT_IN] filename: {t/hello.txt}
+main.c:146(invoke_node) [23683]: node->filename: t/hello.txt
+HelloWorld
+ttsh[2] 🐦 echo foo bar baz > .tmp
+main.c:324(invoke_line) [23683]: Input line='echo foo bar baz > .tmp'
+(root) [N_REDIRECT_OUT] filename: {.tmp}
+  (lhs) [N_COMMAND] argv: [0]:echo [1]:foo [2]:bar [3]:baz
+main.c:38(invoke_node) [23683]: Invoke: [N_REDIRECT_OUT] filename: {.tmp}
+main.c:146(invoke_node) [23683]: node->filename: .tmp
+ttsh[3] 🐦 cat .tmp
+main.c:324(invoke_line) [23683]: Input line='cat .tmp'
+(root) [N_COMMAND] argv: [0]:cat [1]:.tmp
+main.c:38(invoke_node) [23683]: Invoke: [N_COMMAND] argv: [0]:cat [1]:.tmp
+foo bar baz
+ttsh[4] 🐦 echo apple >> .tmp
+main.c:324(invoke_line) [23683]: Input line='echo apple >> .tmp'
+(root) [N_REDIRECT_APPEND] filename: {.tmp}
+  (lhs) [N_COMMAND] argv: [0]:echo [1]:apple
+main.c:38(invoke_node) [23683]: Invoke: [N_REDIRECT_APPEND] filename: {.tmp}
+main.c:146(invoke_node) [23683]: node->filename: .tmp
+ttsh[5] 🐦 cat .tmp
+main.c:324(invoke_line) [23683]: Input line='cat .tmp'
+(root) [N_COMMAND] argv: [0]:cat [1]:.tmp
+main.c:38(invoke_node) [23683]: Invoke: [N_COMMAND] argv: [0]:cat [1]:.tmp
+foo bar baz
+apple
+
+❯ make test4
+✅  OK 🎉 [4-1in] ./main -q -p < t/4-1in.txt
+✅  OK 🎉 [4-2out] ./main -q -p < t/4-2out.txt
+✅  OK 🎉 [4-3inout] ./main -q -p < t/4-3inout.txt
+✅  OK 🎉 [4-4append] ./main -q -p < t/4-4append.txt
+✅  OK 🎉 [4-s1in-fd] ./main -q -p < t/4-s1in-fd.txt
+✅  OK 🎉 [4-s2out-fd] ./main -q -p < t/4-s2out-fd.txt
+✅  OK 🎉 [4-s3append-fd] ./main -q -p < t/4-s3append-fd.txt
+✅  OK 🎉 [4-s4ppid] ./main -q -p < t/4-s4ppid.txt
+
 # 未完部分がある場合は明示せよ．
 
 
 
 ### ExerciseA ### 発展課題A
 # 実装完了したことを示すための適当なコマンドの実行結果をまるごと（ttshプロンプト含めて）ペーストせよ．
+❯ ./main
+ttsh[1] 🐦 echo foo; echo bar
+main.c:324(invoke_line) [24179]: Input line='echo foo; echo bar'
+(root) [N_SEQUENCE]
+  (lhs) [N_COMMAND] argv: [0]:echo [1]:foo
+  (rhs) [N_COMMAND] argv: [0]:echo [1]:bar
+main.c:38(invoke_node) [24179]: Invoke: [N_SEQUENCE]
+main.c:152(invoke_node) [24179]: node->lhs: [N_COMMAND] argv: [0]:echo [1]:foo
+main.c:153(invoke_node) [24179]: node->rhs: [N_COMMAND] argv: [0]:echo [1]:bar
+main.c:38(invoke_node) [24179]: Invoke: [N_COMMAND] argv: [0]:echo [1]:foo
+foo
+main.c:38(invoke_node) [24179]: Invoke: [N_COMMAND] argv: [0]:echo [1]:bar
+bar
+ttsh[2] 🐦 pwd; cd t; pwd
+main.c:324(invoke_line) [24179]: Input line='pwd; cd t; pwd'
+(root) [N_SEQUENCE]
+  (lhs) [N_COMMAND] argv: [0]:pwd
+  (rhs) [N_SEQUENCE]
+    (lhs) [N_COMMAND] argv: [0]:cd [1]:t
+    (rhs) [N_COMMAND] argv: [0]:pwd
+main.c:38(invoke_node) [24179]: Invoke: [N_SEQUENCE]
+main.c:152(invoke_node) [24179]: node->lhs: [N_COMMAND] argv: [0]:pwd
+main.c:153(invoke_node) [24179]: node->rhs: [N_SEQUENCE]
+main.c:38(invoke_node) [24179]: Invoke: [N_COMMAND] argv: [0]:pwd
+/Users/janat/Documents/_Titech/Y3/Q1/System Programming/sysprog-shell
+main.c:38(invoke_node) [24179]: Invoke: [N_SEQUENCE]
+main.c:152(invoke_node) [24179]: node->lhs: [N_COMMAND] argv: [0]:cd [1]:t
+main.c:153(invoke_node) [24179]: node->rhs: [N_COMMAND] argv: [0]:pwd
+main.c:38(invoke_node) [24179]: Invoke: [N_COMMAND] argv: [0]:cd [1]:t
+main.c:38(invoke_node) [24179]: Invoke: [N_COMMAND] argv: [0]:pwd
+/Users/janat/Documents/_Titech/Y3/Q1/System Programming/sysprog-shell/t
+
+❯ make testA
+✅  OK 🎉 [A-1echo] ./main -q -p < t/A-1echo.txt
+✅  OK 🎉 [A-2cd] ./main -q -p < t/A-2cd.txt
+✅  OK 🎉 [A-s1fd] ./main -q -p < t/A-s1fd.txt
+✅  OK 🎉 [A-s2ppid] ./main -q -p < t/A-s2ppid.txt
+
 # 未完部分がある場合は明示せよ．
 
 
 
 ### ExerciseB ### 発展課題B
 # 実装完了したことを示すための適当なコマンドの実行結果をまるごと（ttshプロンプト含めて）ペーストせよ．
+❯ ./main
+ttsh[1] 🐦 true && echo succeeded
+main.c:324(invoke_line) [24346]: Input line='true && echo succeeded'
+(root) [N_AND]
+  (lhs) [N_COMMAND] argv: [0]:true
+  (rhs) [N_COMMAND] argv: [0]:echo [1]:succeeded
+main.c:38(invoke_node) [24346]: Invoke: [N_AND]
+main.c:38(invoke_node) [24346]: Invoke: [N_COMMAND] argv: [0]:true
+main.c:38(invoke_node) [24346]: Invoke: [N_COMMAND] argv: [0]:echo [1]:succeeded
+succeeded
+ttsh[2] 🐦 mkdir tmp && cd tmp && pwd
+main.c:324(invoke_line) [24346]: Input line='mkdir tmp && cd tmp && pwd'
+(root) [N_AND]
+  (lhs) [N_AND]
+    (lhs) [N_COMMAND] argv: [0]:mkdir [1]:tmp
+    (rhs) [N_COMMAND] argv: [0]:cd [1]:tmp
+  (rhs) [N_COMMAND] argv: [0]:pwd
+main.c:38(invoke_node) [24346]: Invoke: [N_AND]
+main.c:38(invoke_node) [24346]: Invoke: [N_AND]
+main.c:38(invoke_node) [24346]: Invoke: [N_COMMAND] argv: [0]:mkdir [1]:tmp
+main.c:38(invoke_node) [24346]: Invoke: [N_COMMAND] argv: [0]:cd [1]:tmp
+main.c:38(invoke_node) [24346]: Invoke: [N_COMMAND] argv: [0]:pwd
+/Users/janat/Documents/_Titech/Y3/Q1/System Programming/sysprog-shell/tmp
+ttsh[3] 🐦 cd ..
+main.c:324(invoke_line) [24346]: Input line='cd ..'
+(root) [N_COMMAND] argv: [0]:cd [1]:..
+main.c:38(invoke_node) [24346]: Invoke: [N_COMMAND] argv: [0]:cd [1]:..
+ttsh[4] 🐦 rmdir tmp && echo directory removed
+main.c:324(invoke_line) [24346]: Input line='rmdir tmp && echo directory removed'
+(root) [N_AND]
+  (lhs) [N_COMMAND] argv: [0]:rmdir [1]:tmp
+  (rhs) [N_COMMAND] argv: [0]:echo [1]:directory [2]:removed
+main.c:38(invoke_node) [24346]: Invoke: [N_AND]
+main.c:38(invoke_node) [24346]: Invoke: [N_COMMAND] argv: [0]:rmdir [1]:tmp
+main.c:38(invoke_node) [24346]: Invoke: [N_COMMAND] argv: [0]:echo [1]:directory [2]:removed
+directory removed
+ttsh[5] 🐦 cd tmp || echo ERROR
+main.c:324(invoke_line) [24346]: Input line='cd tmp || echo ERROR'
+(root) [N_OR]
+  (lhs) [N_COMMAND] argv: [0]:cd [1]:tmp
+  (rhs) [N_COMMAND] argv: [0]:echo [1]:ERROR
+main.c:38(invoke_node) [24346]: Invoke: [N_OR]
+main.c:169(invoke_node) [24346]: node->lhs: [N_COMMAND] argv: [0]:cd [1]:tmp
+main.c:170(invoke_node) [24346]: node->rhs: [N_COMMAND] argv: [0]:echo [1]:ERROR
+main.c:38(invoke_node) [24346]: Invoke: [N_COMMAND] argv: [0]:cd [1]:tmp
+cd: No such file or directory
+main.c:38(invoke_node) [24346]: Invoke: [N_COMMAND] argv: [0]:echo [1]:ERROR
+ERROR
+
+❯ make testB
+✅  OK 🎉 [B-1and] ./main -q -p < t/B-1and.txt
+✅  OK 🎉 [B-2or] ./main -q -p < t/B-2or.txt
+✅  OK 🎉 [B-3mixed] ./main -q -p < t/B-3mixed.txt
+✅  OK 🎉 [B-4mixed2] ./main -q -p < t/B-4mixed2.txt
+✅  OK 🎉 [B-s1and-fd] ./main -q -p < t/B-s1and-fd.txt
+✅  OK 🎉 [B-s2or-fd] ./main -q -p < t/B-s2or-fd.txt
+✅  OK 🎉 [B-s3ppid] ./main -q -p < t/B-s3ppid.txt
+
 # 未完部分がある場合は明示せよ．
 
 
 
 ### ExerciseC ### 発展課題C
 # 実装完了したことを示すための適当なコマンドの実行結果をまるごと（ttshプロンプト含めて）ペーストせよ．
+❯ ./main
+ttsh[1] 🐦 (cat t/services.txt | grep '^#'; echo enil tsal) > .tmp
+main.c:324(invoke_line) [24846]: Input line='(cat t/services.txt | grep '^#'; echo enil tsal) > .tmp'
+(root) [N_REDIRECT_OUT] filename: {.tmp}
+  (lhs) [N_SUBSHELL]
+    (lhs) [N_SEQUENCE]
+      (lhs) [N_PIPE]
+        (lhs) [N_COMMAND] argv: [0]:cat [1]:t/services.txt
+        (rhs) [N_COMMAND] argv: [0]:grep [1]:^#
+      (rhs) [N_COMMAND] argv: [0]:echo [1]:enil [2]:tsal
+main.c:38(invoke_node) [24846]: Invoke: [N_REDIRECT_OUT] filename: {.tmp}
+main.c:146(invoke_node) [24846]: node->filename: .tmp
+main.c:38(invoke_node) [24870]: Invoke: [N_SUBSHELL]
+main.c:178(invoke_node) [24870]: node: [N_SUBSHELL]
+main.c:38(invoke_node) [24871]: Invoke: [N_SEQUENCE]
+main.c:152(invoke_node) [24871]: node->lhs: [N_PIPE]
+main.c:153(invoke_node) [24871]: node->rhs: [N_COMMAND] argv: [0]:echo [1]:enil [2]:tsal
+main.c:38(invoke_node) [24871]: Invoke: [N_PIPE]
+main.c:61(invoke_node) [24871]: node->lhs: [N_COMMAND] argv: [0]:cat [1]:t/services.txt
+main.c:62(invoke_node) [24871]: node->rhs: [N_COMMAND] argv: [0]:grep [1]:^#
+main.c:38(invoke_node) [24871]: Invoke: [N_COMMAND] argv: [0]:echo [1]:enil [2]:tsal
+ttsh[2] 🐦 (rev | tail -r -n 5) < .tmp
+main.c:324(invoke_line) [24846]: Input line='(rev | tail -r -n 5) < .tmp'
+(root) [N_REDIRECT_IN] filename: {.tmp}
+  (lhs) [N_SUBSHELL]
+    (lhs) [N_PIPE]
+      (lhs) [N_COMMAND] argv: [0]:rev
+      (rhs) [N_COMMAND] argv: [0]:tail [1]:-r [2]:-n [3]:5
+main.c:38(invoke_node) [24846]: Invoke: [N_REDIRECT_IN] filename: {.tmp}
+main.c:146(invoke_node) [24846]: node->filename: .tmp
+main.c:38(invoke_node) [24878]: Invoke: [N_SUBSHELL]
+main.c:178(invoke_node) [24878]: node: [N_SUBSHELL]
+main.c:38(invoke_node) [24879]: Invoke: [N_PIPE]
+main.c:61(invoke_node) [24879]: node->lhs: [N_COMMAND] argv: [0]:rev
+main.c:62(invoke_node) [24879]: node->rhs: [N_COMMAND] argv: [0]:tail [1]:-r [2]:-n [3]:5
+last line
+tnemngissa na tuohtiw ti desu vn MELBORP #
+,trop eht dengissa 425brk MELBORP #
+=============================================================!SMELBORP#
+noitcennoc vres-mh ryhpeZ#   pdu/5012   vrs-mh-ryhpez#
+ttsh[3] 🐦 (cd t; pwd); pwd
+main.c:324(invoke_line) [24846]: Input line='(cd t; pwd); pwd'
+(root) [N_SEQUENCE]
+  (lhs) [N_SUBSHELL]
+    (lhs) [N_SEQUENCE]
+      (lhs) [N_COMMAND] argv: [0]:cd [1]:t
+      (rhs) [N_COMMAND] argv: [0]:pwd
+  (rhs) [N_COMMAND] argv: [0]:pwd
+main.c:38(invoke_node) [24846]: Invoke: [N_SEQUENCE]
+main.c:152(invoke_node) [24846]: node->lhs: [N_SUBSHELL]
+main.c:153(invoke_node) [24846]: node->rhs: [N_COMMAND] argv: [0]:pwd
+main.c:38(invoke_node) [24846]: Invoke: [N_SUBSHELL]
+main.c:178(invoke_node) [24846]: node: [N_SUBSHELL]
+main.c:38(invoke_node) [24892]: Invoke: [N_SEQUENCE]
+main.c:152(invoke_node) [24892]: node->lhs: [N_COMMAND] argv: [0]:cd [1]:t
+main.c:153(invoke_node) [24892]: node->rhs: [N_COMMAND] argv: [0]:pwd
+main.c:38(invoke_node) [24892]: Invoke: [N_COMMAND] argv: [0]:cd [1]:t
+main.c:38(invoke_node) [24892]: Invoke: [N_COMMAND] argv: [0]:pwd
+/Users/janat/Documents/_Titech/Y3/Q1/System Programming/sysprog-shell/t
+main.c:38(invoke_node) [24846]: Invoke: [N_COMMAND] argv: [0]:pwd
+/Users/janat/Documents/_Titech/Y3/Q1/System Programming/sysprog-shell
+
+❯ make testC
+✅  OK 🎉 [C-1echo] ./main -q -p < t/C-1echo.txt
+✅  OK 🎉 [C-2and] ./main -q -p < t/C-2and.txt
+✅  OK 🎉 [C-3cd] ./main -q -p < t/C-3cd.txt
+✅  OK 🎉 [C-s1fd] ./main -q -p < t/C-s1fd.txt
+
 # 未完部分がある場合は明示せよ．
 
 
 
 ### Comment ### 感想（採点対象外，好きに書いて下さい．）
 
-
+It was very interesting excersice. The reason that I enrolled this course because I heard from my sempais that I get to implement my own shell. Really enjoyed the assignment.
 
 ### END ###
