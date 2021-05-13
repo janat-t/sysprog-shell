@@ -2,4 +2,5 @@ main
 fd
 .DS_Store
 *tmp*
+*.zip
 
